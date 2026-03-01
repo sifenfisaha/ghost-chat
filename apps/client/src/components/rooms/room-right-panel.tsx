@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { UsersIcon } from "lucide-react";
+import { UsersIcon } from 'lucide-react';
 
-import { useRoomsStore } from "@/store/rooms-store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRoomsStore } from '@/store/rooms-store';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type RoomRightPanelProps = {
   roomId: string;
@@ -14,14 +14,18 @@ export function RoomRightPanel({ roomId }: RoomRightPanelProps) {
   if (!room) return null;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex h-full min-h-0 flex-col gap-4 overflow-y-auto pr-1">
       <Card className="border-border/70 bg-card/70 py-0">
         <CardHeader className="border-b border-border/60 px-4 py-3">
-          <CardTitle className="text-xs tracking-[0.14em] uppercase">Room Info</CardTitle>
+          <CardTitle className="text-xs tracking-[0.14em] uppercase">
+            Room Info
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 px-4 py-4 text-xs">
           <div className="border-border/60 bg-background/40 border p-2">
-            <p className="text-muted-foreground mb-1 text-[10px] uppercase">Session ID</p>
+            <p className="text-muted-foreground mb-1 text-[10px] uppercase">
+              Session ID
+            </p>
             <p className="text-primary font-medium">{roomId}</p>
           </div>
           <InfoRow label="Encryption" value={room.encryption} />
@@ -59,7 +63,9 @@ export function RoomRightPanel({ roomId }: RoomRightPanelProps) {
           {room.users.map((user) => (
             <div key={user.id} className="flex items-center justify-between">
               <p className="text-xs">{user.name}</p>
-              <span className={`text-[10px] ${user.active ? "text-primary" : "text-muted-foreground"}`}>
+              <span
+                className={`text-[10px] ${user.active ? 'text-primary' : 'text-muted-foreground'}`}
+              >
                 {user.state}
               </span>
             </div>

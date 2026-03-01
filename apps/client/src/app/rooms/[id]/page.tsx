@@ -1,11 +1,12 @@
-import { RoomWorkspace } from "@/components/rooms/room-workspace";
+import { RoomWorkspace } from '@/components/rooms/room-workspace';
 
 type RoomPageProps = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
-export default function RoomDetailPage({ params }: RoomPageProps) {
-  return <RoomWorkspace roomId={params.id} />;
+export default async function RoomDetailPage({ params }: RoomPageProps) {
+  const { id } = await params;
+  return <RoomWorkspace roomId={id} />;
 }

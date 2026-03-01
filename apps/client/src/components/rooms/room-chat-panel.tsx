@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { SendIcon } from "lucide-react";
+import { SendIcon } from 'lucide-react';
 
-import { useRoomsStore } from "@/store/rooms-store";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { useRoomsStore } from '@/store/rooms-store';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 
 type RoomChatPanelProps = {
   roomId: string;
@@ -15,18 +15,17 @@ export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
   const room = useRoomsStore((state) => state.roomsById[roomId]);
   const setComposerDraft = useRoomsStore((state) => state.setComposerDraft);
   const sendMessage = useRoomsStore((state) => state.sendMessage);
-  const setAutoWipe = useRoomsStore((state) => state.setAutoWipe);
   if (!room) return null;
 
   return (
-    <Card className="border-border/70 bg-card/70 py-0">
+    <Card className="border-border/70 bg-card/70 flex h-full min-h-0 flex-col py-0">
       <CardHeader className="border-b border-border/60 px-4 py-3">
         <p className="text-primary bg-primary/10 border-primary/30 w-fit border px-2 py-1 text-[10px] tracking-[0.08em]">
           {room.systemBanner}
         </p>
       </CardHeader>
-      <CardContent className="flex min-h-[520px] flex-col px-4 py-4">
-        <div className="space-y-4">
+      <CardContent className="flex min-h-0 flex-1 flex-col px-4 py-4">
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
           {room.messages.slice(0, 2).map((chat) => (
             <ChatBlock
               key={chat.id}
@@ -56,20 +55,6 @@ export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
           <div className="text-muted-foreground flex items-center gap-5 text-[11px] tracking-widest uppercase">
             <span>Attach</span>
             <span>Snippet</span>
-            <span className="ml-auto">Auto-wipe</span>
-            <button
-              type="button"
-              onClick={() => setAutoWipe(roomId, !room.autoWipeEnabled)}
-              className={`relative inline-flex h-5 w-9 items-center border ${
-                room.autoWipeEnabled ? "bg-primary border-primary/60" : "bg-muted border-border"
-              }`}
-            >
-              <span
-                className={`bg-primary-foreground absolute top-0.5 size-4 transition-transform ${
-                  room.autoWipeEnabled ? "translate-x-4" : "translate-x-0.5"
-                }`}
-              />
-            </button>
           </div>
           <div className="flex items-center gap-2">
             <Input
@@ -78,7 +63,11 @@ export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
               className="h-10 bg-background/70 text-sm"
               placeholder={room.composerPlaceholder}
             />
-            <Button onClick={() => sendMessage(roomId)} size="icon" className="size-10">
+            <Button
+              onClick={() => sendMessage(roomId)}
+              size="icon"
+              className="size-10"
+            >
               <SendIcon className="size-4" />
             </Button>
           </div>
@@ -92,23 +81,23 @@ function ChatBlock({
   author,
   time,
   message,
-  variant = "default",
+  variant = 'default',
 }: {
   author: string;
   time: string;
   message: string;
-  variant?: "default" | "primary";
+  variant?: 'default' | 'primary';
 }) {
   return (
-    <div className={`max-w-[78%] ${variant === "primary" ? "ml-auto" : ""}`}>
+    <div className={`max-w-[78%] ${variant === 'primary' ? 'ml-auto' : ''}`}>
       <p className="text-muted-foreground mb-1 text-[10px]">
         {author} <span className="ml-1 tabular-nums">{time}</span>
       </p>
       <div
         className={`border px-4 py-3 text-sm leading-6 ${
-          variant === "primary"
-            ? "bg-primary text-primary-foreground border-primary/70"
-            : "bg-background/60 border-border/60"
+          variant === 'primary'
+            ? 'bg-primary text-primary-foreground border-primary/70'
+            : 'bg-background/60 border-border/60'
         }`}
       >
         {message}

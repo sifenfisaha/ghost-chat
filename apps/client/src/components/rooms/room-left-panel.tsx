@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { FileIcon, FileKeyIcon, FileTextIcon, FolderIcon } from "lucide-react";
+import { FileIcon, FileKeyIcon, FileTextIcon, FolderIcon } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { RoomAssetKind } from "@/components/rooms/data";
-import { useRoomsStore } from "@/store/rooms-store";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { RoomAssetKind } from '@/components/rooms/data';
+import { useRoomsStore } from '@/store/rooms-store';
 
 type RoomLeftPanelProps = {
   roomId: string;
@@ -12,7 +12,6 @@ type RoomLeftPanelProps = {
 
 export function RoomLeftPanel({ roomId }: RoomLeftPanelProps) {
   const room = useRoomsStore((state) => state.roomsById[roomId]);
-  const toggleSecurityRule = useRoomsStore((state) => state.toggleSecurityRule);
   if (!room) return null;
 
   return (
@@ -39,67 +38,21 @@ export function RoomLeftPanel({ roomId }: RoomLeftPanelProps) {
                 <AssetIcon kind={asset.kind} />
                 {asset.name}
               </p>
-              <span className="text-primary text-[10px] tabular-nums">{asset.ttl}</span>
+              <span className="text-primary text-[10px] tabular-nums">
+                {asset.ttl}
+              </span>
             </div>
             <p className="text-muted-foreground text-[10px]">{asset.meta}</p>
           </div>
         ))}
       </CardContent>
-
-      <div className="mt-auto border-t border-border/60 p-3">
-        <p className="mb-2 text-xs tracking-[0.14em] uppercase">Security Enforcement</p>
-        <div className="space-y-2">
-          {room.securityRules.map((rule) => (
-            <ToggleRow
-              key={rule.id}
-              label={rule.label}
-              detail={rule.detail}
-              enabled={rule.enabled}
-              onToggle={() => toggleSecurityRule(roomId, rule.id)}
-            />
-          ))}
-        </div>
-      </div>
     </Card>
   );
 }
 
-function ToggleRow({
-  label,
-  detail,
-  enabled,
-  onToggle,
-}: {
-  label: string;
-  detail: string;
-  enabled: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <div className="border-border/50 bg-background/40 flex items-center justify-between border p-2">
-      <div>
-        <p className="text-xs">{label}</p>
-        <p className="text-muted-foreground text-[10px]">{detail}</p>
-      </div>
-      <button
-        type="button"
-        onClick={onToggle}
-        className={`relative inline-flex h-5 w-9 border ${
-          enabled ? "bg-primary border-primary/60" : "bg-muted border-border"
-        }`}
-      >
-        <span
-          className={`bg-background absolute top-0.5 size-4 transition-transform ${
-            enabled ? "translate-x-4" : "translate-x-0.5"
-          }`}
-        />
-      </button>
-    </div>
-  );
-}
-
 function AssetIcon({ kind }: { kind: RoomAssetKind }) {
-  if (kind === "key") return <FileKeyIcon className="text-primary size-3.5" />;
-  if (kind === "document") return <FileTextIcon className="text-primary size-3.5" />;
+  if (kind === 'key') return <FileKeyIcon className="text-primary size-3.5" />;
+  if (kind === 'document')
+    return <FileTextIcon className="text-primary size-3.5" />;
   return <FileIcon className="text-primary size-3.5" />;
 }
