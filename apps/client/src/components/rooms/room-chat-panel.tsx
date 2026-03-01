@@ -52,10 +52,6 @@ export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
         </div>
 
         <div className="mt-auto space-y-3 border-t border-border/60 pt-4">
-          <div className="text-muted-foreground flex items-center gap-5 text-[11px] tracking-widest uppercase">
-            <span>Attach</span>
-            <span>Snippet</span>
-          </div>
           <div className="flex items-center gap-2">
             <Input
               value={room.composerDraft}

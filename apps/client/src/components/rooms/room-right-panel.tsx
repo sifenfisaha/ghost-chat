@@ -4,17 +4,40 @@ import { UsersIcon } from 'lucide-react';
 
 import { useRoomsStore } from '@/store/rooms-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 type RoomRightPanelProps = {
   roomId: string;
 };
 
 export function RoomRightPanel({ roomId }: RoomRightPanelProps) {
+  return (
+    <RoomSidebarContent
+      roomId={roomId}
+      className="hidden h-full min-h-0 flex-col gap-4 overflow-y-auto pr-1 xl:flex"
+    />
+  );
+}
+
+type RoomSidebarContentProps = {
+  roomId: string;
+  className?: string;
+};
+
+export function RoomSidebarContent({
+  roomId,
+  className,
+}: RoomSidebarContentProps) {
   const room = useRoomsStore((state) => state.roomsById[roomId]);
   if (!room) return null;
 
   return (
-    <div className="flex h-full min-h-0 flex-col gap-4 overflow-y-auto pr-1">
+    <div
+      className={cn(
+        'flex h-full min-h-0 flex-col gap-4 overflow-y-auto pr-1',
+        className
+      )}
+    >
       <Card className="border-border/70 bg-card/70 flex min-h-0 flex-col py-0">
         <CardHeader className="border-b border-border/60 px-4 py-3">
           <CardTitle className="text-xs tracking-[0.14em] uppercase">
