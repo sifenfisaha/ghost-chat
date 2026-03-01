@@ -1,4 +1,4 @@
-import { type RoomDetailData, type RoomMessage } from '@/components/rooms/data';
+import { type RoomDetailData, type RoomMessage } from '@/types/rooms';
 
 import { formatNowTime } from '../rooms.initial';
 import {

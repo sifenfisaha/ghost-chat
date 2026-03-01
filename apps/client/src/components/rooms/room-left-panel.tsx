@@ -3,8 +3,8 @@
 import { FileIcon, FileKeyIcon, FileTextIcon, FolderIcon } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { RoomAssetKind } from '@/components/rooms/data';
 import { useRoomsStore } from '@/store/rooms-store';
+import type { RoomAssetKind } from '@/types/rooms';
 
 type RoomLeftPanelProps = {
   roomId: string;

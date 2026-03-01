@@ -1,19 +1,24 @@
-import { io, type Socket } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
+
+import {
+  type AppSocket,
+  type ClientToServerEvents,
+  type ServerToClientEvents,
+  type SocketClientOptions,
+} from '@/types/socket';
 
 const DEFAULT_SOCKET_URL =
   process.env.NEXT_PUBLIC_SOCKET_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
   'http://localhost:4000';
 
-type SocketRegistry = Map<string, Socket>;
+type SocketRegistry = Map<string, AppSocket>;
 
 const sockets: SocketRegistry = new Map();
 
-export type SocketClientOptions = {
-  namespace?: string;
-};
-
-export function getSocketClient(options: SocketClientOptions = {}) {
+export function getSocketClient(
+  options: SocketClientOptions = {}
+): Socket<ServerToClientEvents, ClientToServerEvents> {
   const namespace = options.namespace ?? '/';
 
   if (!sockets.has(namespace)) {

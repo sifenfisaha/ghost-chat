@@ -1,23 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { type Socket } from 'socket.io-client';
 
 import { disconnectSocketClient, getSocketClient } from '@/socket/client';
 
-export type UseSocketOptions = {
-  enabled?: boolean;
-  autoConnect?: boolean;
-  disconnectOnUnmount?: boolean;
-  namespace?: string;
-};
-
-export type UseSocketResult = {
-  socket: Socket;
-  isConnected: boolean;
-  socketId: string | null;
-  transport: string | null;
-};
+import { type UseSocketOptions, type UseSocketResult } from '@/types/socket';
 
 export function useSocket(options: UseSocketOptions = {}): UseSocketResult {
   const {

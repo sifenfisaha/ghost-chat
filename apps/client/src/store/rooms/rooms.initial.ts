@@ -1,4 +1,5 @@
-import { roomsBackendData, type RoomDetailData } from '@/components/rooms/data';
+import { roomsBackendData } from '@/components/rooms/data';
+import { type RoomDetailData } from '@/types/rooms';
 
 import { type RoomsStateData } from './rooms.types';
 
