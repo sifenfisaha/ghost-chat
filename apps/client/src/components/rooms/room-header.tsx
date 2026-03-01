@@ -1,8 +1,8 @@
- "use client";
+'use client';
 
-import { ActivityIcon, Clock3Icon, ShieldCheckIcon, UserIcon } from "lucide-react";
+import { Clock3Icon, ShieldCheckIcon, UserIcon } from 'lucide-react';
 
-import { useRoomsStore } from "@/store/rooms-store";
+import { useRoomsStore } from '@/store/rooms-store';
 
 type RoomHeaderProps = {
   roomId: string;
@@ -20,8 +20,12 @@ export function RoomHeader({ roomId }: RoomHeaderProps) {
             <ShieldCheckIcon className="size-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold tracking-[0.12em] uppercase">{room.title}</p>
-            <p className="text-primary text-[11px] tracking-[0.14em] uppercase">{room.sessionStatus}</p>
+            <p className="text-sm font-semibold tracking-[0.12em] uppercase">
+              {room.title}
+            </p>
+            <p className="text-primary text-[11px] tracking-[0.14em] uppercase">
+              {room.sessionStatus}
+            </p>
           </div>
         </div>
 
@@ -36,16 +40,6 @@ export function RoomHeader({ roomId }: RoomHeaderProps) {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="border-border/70 bg-card/70 flex items-center gap-2 border px-3 py-2">
-            <ActivityIcon className="text-primary size-3.5" />
-            <span className="text-primary text-[11px] tracking-widest uppercase">
-              {room.connectionState}
-            </span>
-          </div>
-          <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-            <ActivityIcon className="size-3.5" />
-            <span>{room.latencyLabel}</span>
-          </div>
           <div className="border-border/70 bg-card/70 flex items-center gap-2 border px-3 py-2">
             <UserIcon className="size-3.5" />
             <span className="text-xs font-medium">{room.operator}</span>

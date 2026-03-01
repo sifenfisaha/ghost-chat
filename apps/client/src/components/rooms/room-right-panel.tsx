@@ -15,13 +15,13 @@ export function RoomRightPanel({ roomId }: RoomRightPanelProps) {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 overflow-y-auto pr-1">
-      <Card className="border-border/70 bg-card/70 py-0">
+      <Card className="border-border/70 bg-card/70 flex min-h-0 flex-col py-0">
         <CardHeader className="border-b border-border/60 px-4 py-3">
           <CardTitle className="text-xs tracking-[0.14em] uppercase">
             Room Info
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3 px-4 py-4 text-xs">
+        <CardContent className="min-h-0 overflow-y-auto space-y-3 px-4 py-4 text-xs">
           <div className="border-border/60 bg-background/40 border p-2">
             <p className="text-muted-foreground mb-1 text-[10px] uppercase">
               Session ID
@@ -33,14 +33,14 @@ export function RoomRightPanel({ roomId }: RoomRightPanelProps) {
         </CardContent>
       </Card>
 
-      <Card className="border-border/70 bg-card/70 py-0">
+      <Card className="border-border/70 bg-card/70 flex min-h-0 flex-1 flex-col py-0">
         <CardHeader className="border-b border-border/60 px-4 py-3">
           <CardTitle className="flex items-center justify-between text-xs tracking-[0.14em] uppercase">
             <span>System Logs</span>
             <span className="text-primary text-[10px]">Live</span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 px-4 py-4">
+        <CardContent className="min-h-0 flex-1 overflow-y-auto space-y-2 px-4 py-4">
           {room.logs.map((log) => (
             <p key={log.id} className="text-muted-foreground text-[11px]">
               <span className="mr-1.5 text-[10px] tabular-nums text-foreground/70">
@@ -52,14 +52,14 @@ export function RoomRightPanel({ roomId }: RoomRightPanelProps) {
         </CardContent>
       </Card>
 
-      <Card className="border-border/70 bg-card/70 py-0">
+      <Card className="border-border/70 bg-card/70 flex min-h-0 flex-1 flex-col py-0">
         <CardHeader className="border-b border-border/60 px-4 py-3">
           <CardTitle className="flex items-center justify-between text-xs tracking-[0.14em] uppercase">
             <span>Active Users ({room.users.length})</span>
             <UsersIcon className="size-3.5" />
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 px-4 py-4">
+        <CardContent className="min-h-0 flex-1 overflow-y-auto space-y-2 px-4 py-4">
           {room.users.map((user) => (
             <div key={user.id} className="flex items-center justify-between">
               <p className="text-xs">{user.name}</p>
