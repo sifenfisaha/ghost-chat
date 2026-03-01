@@ -1,7 +1,13 @@
 import { roomsBackendData } from '@/components/rooms/data';
-import { type RoomDetailData } from '@/types/rooms';
+import { roomsLandingData } from '@/components/rooms/landing-data';
+import { type RoomDetailData, type RoomsLandingData } from '@/types/rooms';
 
-import { type RoomsStateData } from './rooms.types';
+export type RoomsStateData = {
+  landing: RoomsLandingData;
+  roomsById: Record<string, RoomDetailData>;
+  roomOrder: string[];
+  activeRoomId: string | null;
+};
 
 const roomsById = Object.fromEntries(
   roomsBackendData.rooms.map((room) => [room.id, cloneRoom(room)])
@@ -9,7 +15,7 @@ const roomsById = Object.fromEntries(
 const roomOrder = roomsBackendData.rooms.map((room) => room.id);
 
 export const initialRoomsState: RoomsStateData = {
-  landing: roomsBackendData.landing,
+  landing: roomsLandingData,
   roomsById,
   roomOrder,
   activeRoomId: roomOrder[0] ?? null,

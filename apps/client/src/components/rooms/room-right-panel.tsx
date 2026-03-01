@@ -2,9 +2,9 @@
 
 import { UsersIcon } from 'lucide-react';
 
-import { useRoomsStore } from '@/store/rooms-store';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { useAppSelector } from '@/store/hooks';
 
 type RoomRightPanelProps = {
   roomId: string;
@@ -28,7 +28,7 @@ export function RoomSidebarContent({
   roomId,
   className,
 }: RoomSidebarContentProps) {
-  const room = useRoomsStore((state) => state.roomsById[roomId]);
+  const room = useAppSelector((state) => state.rooms.roomsById[roomId]);
   if (!room) return null;
 
   return (
