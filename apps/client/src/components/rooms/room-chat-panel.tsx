@@ -2,19 +2,22 @@
 
 import { SendIcon } from 'lucide-react';
 
-import { useRoomsStore } from '@/store/rooms-store';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  sendMessage,
+  setComposerDraft,
+} from '@/store/features/rooms/rooms.slice';
 
 type RoomChatPanelProps = {
   roomId: string;
 };
 
 export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
-  const room = useRoomsStore((state) => state.roomsById[roomId]);
-  const setComposerDraft = useRoomsStore((state) => state.setComposerDraft);
-  const sendMessage = useRoomsStore((state) => state.sendMessage);
+  const dispatch = useAppDispatch();
+  const room = useAppSelector((state) => state.rooms.roomsById[roomId]);
   if (!room) return null;
 
   return (
@@ -55,12 +58,16 @@ export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
           <div className="flex items-center gap-2">
             <Input
               value={room.composerDraft}
-              onChange={(event) => setComposerDraft(roomId, event.target.value)}
+              onChange={(event) =>
+                dispatch(
+                  setComposerDraft({ roomId, draft: event.target.value })
+                )
+              }
               className="h-10 bg-background/70 text-sm"
               placeholder={room.composerPlaceholder}
             />
             <Button
-              onClick={() => sendMessage(roomId)}
+              onClick={() => dispatch(sendMessage(roomId))}
               size="icon"
               className="size-10"
             >

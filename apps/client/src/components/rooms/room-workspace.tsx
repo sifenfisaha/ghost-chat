@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { XIcon } from 'lucide-react';
 
-import { useRoomsStore } from '@/store/rooms-store';
 import { RoomChatPanel } from '@/components/rooms/room-chat-panel';
 import { RoomHeader } from '@/components/rooms/room-header';
 import {
@@ -12,14 +11,15 @@ import {
 } from '@/components/rooms/room-right-panel';
 import { Button } from '@/components/ui/button';
 import { useSocket } from '@/hooks/use-socket';
+import { useAppDispatch } from '@/store/hooks';
+import { ensureRoom, setActiveRoom } from '@/store/features/rooms/rooms.slice';
 
 type RoomWorkspaceProps = {
   roomId: string;
 };
 
 export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
-  const ensureRoom = useRoomsStore((state) => state.ensureRoom);
-  const setActiveRoom = useRoomsStore((state) => state.setActiveRoom);
+  const dispatch = useAppDispatch();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useSocket({
@@ -29,9 +29,9 @@ export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
   });
 
   useEffect(() => {
-    ensureRoom(roomId);
-    setActiveRoom(roomId);
-  }, [ensureRoom, roomId, setActiveRoom]);
+    dispatch(ensureRoom(roomId));
+    dispatch(setActiveRoom(roomId));
+  }, [dispatch, roomId]);
 
   useEffect(() => {
     setIsMobileSidebarOpen(false);

@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { useRoomsStore } from '@/store/rooms-store';
+import { useAppSelector } from '@/store/hooks';
 
 type RoomHeaderProps = {
   roomId: string;
@@ -16,7 +16,7 @@ type RoomHeaderProps = {
 };
 
 export function RoomHeader({ roomId, onOpenSidebar }: RoomHeaderProps) {
-  const room = useRoomsStore((state) => state.roomsById[roomId]);
+  const room = useAppSelector((state) => state.rooms.roomsById[roomId]);
   if (!room) return null;
 
   return (

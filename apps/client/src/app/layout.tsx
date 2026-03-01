@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { AppProvidor } from '@/providors/AppProvidor';
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -32,7 +33,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} dark antialiased`}
       >
-        {children}
+        <AppProvidor>{children}</AppProvidor>
       </body>
     </html>
   );

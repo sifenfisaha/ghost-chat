@@ -3,7 +3,7 @@
 import { FileIcon, FileKeyIcon, FileTextIcon, FolderIcon } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useRoomsStore } from '@/store/rooms-store';
+import { useAppSelector } from '@/store/hooks';
 import type { RoomAssetKind } from '@/types/rooms';
 
 type RoomLeftPanelProps = {
@@ -11,7 +11,7 @@ type RoomLeftPanelProps = {
 };
 
 export function RoomLeftPanel({ roomId }: RoomLeftPanelProps) {
-  const room = useRoomsStore((state) => state.roomsById[roomId]);
+  const room = useAppSelector((state) => state.rooms.roomsById[roomId]);
   if (!room) return null;
 
   return (

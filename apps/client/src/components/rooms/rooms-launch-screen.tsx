@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FingerprintIcon, LockIcon, ShieldIcon, TimerIcon } from 'lucide-react';
 
-import { useRoomsStore } from '@/store/rooms-store';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,23 +12,29 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  createPrivateSession,
+  joinExistingRoom,
+} from '@/store/features/rooms/rooms.slice';
 
 export function RoomsLaunchScreen() {
   const router = useRouter();
-  const landing = useRoomsStore((state) => state.landing);
-  const createPrivateSession = useRoomsStore(
-    (state) => state.createPrivateSession
+  const dispatch = useAppDispatch();
+  const landing = useAppSelector((state) => state.rooms.landing);
+  const firstRoomId = useAppSelector(
+    (state) => state.rooms.roomOrder[0] ?? null
   );
-  const joinExistingRoom = useRoomsStore((state) => state.joinExistingRoom);
 
   const handleCreate = () => {
-    const roomId = createPrivateSession();
+    const roomId = dispatch(createPrivateSession()).payload;
     router.push(`/rooms/${roomId}`);
   };
 
   const handleJoin = () => {
-    const roomId = joinExistingRoom();
+    const roomId = firstRoomId;
     if (!roomId) return;
+    dispatch(joinExistingRoom(roomId));
     router.push(`/rooms/${roomId}`);
   };
 
