@@ -73,6 +73,5 @@ export type RoomsLandingData = {
 };
 
 export type RoomsBackendData = {
-  landing: RoomsLandingData;
   rooms: RoomDetailData[];
 };
