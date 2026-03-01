@@ -1,0 +1,80 @@
+"use client";
+
+import { UsersIcon } from "lucide-react";
+
+import { useRoomsStore } from "@/store/rooms-store";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+type RoomRightPanelProps = {
+  roomId: string;
+};
+
+export function RoomRightPanel({ roomId }: RoomRightPanelProps) {
+  const room = useRoomsStore((state) => state.roomsById[roomId]);
+  if (!room) return null;
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Card className="border-border/70 bg-card/70 py-0">
+        <CardHeader className="border-b border-border/60 px-4 py-3">
+          <CardTitle className="text-xs tracking-[0.14em] uppercase">Room Info</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 px-4 py-4 text-xs">
+          <div className="border-border/60 bg-background/40 border p-2">
+            <p className="text-muted-foreground mb-1 text-[10px] uppercase">Session ID</p>
+            <p className="text-primary font-medium">{roomId}</p>
+          </div>
+          <InfoRow label="Encryption" value={room.encryption} />
+          <InfoRow label="Auto-Destruct" value={room.autoDestruct} />
+        </CardContent>
+      </Card>
+
+      <Card className="border-border/70 bg-card/70 py-0">
+        <CardHeader className="border-b border-border/60 px-4 py-3">
+          <CardTitle className="flex items-center justify-between text-xs tracking-[0.14em] uppercase">
+            <span>System Logs</span>
+            <span className="text-primary text-[10px]">Live</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 px-4 py-4">
+          {room.logs.map((log) => (
+            <p key={log.id} className="text-muted-foreground text-[11px]">
+              <span className="mr-1.5 text-[10px] tabular-nums text-foreground/70">
+                [{log.time}]
+              </span>
+              {log.message}
+            </p>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card className="border-border/70 bg-card/70 py-0">
+        <CardHeader className="border-b border-border/60 px-4 py-3">
+          <CardTitle className="flex items-center justify-between text-xs tracking-[0.14em] uppercase">
+            <span>Active Users ({room.users.length})</span>
+            <UsersIcon className="size-3.5" />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 px-4 py-4">
+          {room.users.map((user) => (
+            <div key={user.id} className="flex items-center justify-between">
+              <p className="text-xs">{user.name}</p>
+              <span className={`text-[10px] ${user.active ? "text-primary" : "text-muted-foreground"}`}>
+                {user.state}
+              </span>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <p className="text-muted-foreground">{label}</p>
+      <p className="text-primary">{value}</p>
+    </div>
+  );
+}
