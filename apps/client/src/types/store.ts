@@ -1,7 +1,6 @@
-import { type RoomDetailData, type RoomsLandingData } from '@/types/rooms';
+import { type RoomDetailData } from '@/types/rooms';
 
 export type RoomsStateData = {
-  landing: RoomsLandingData;
   roomsById: Record<string, RoomDetailData>;
   roomOrder: string[];
   activeRoomId: string | null;

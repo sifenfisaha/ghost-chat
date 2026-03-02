@@ -58,20 +58,6 @@ export type RoomDetailData = {
   composerPlaceholder: string;
 };
 
-export type RoomsLandingData = {
-  title: string;
-  status: string;
-  navItems: string[];
-  protocolTitle: string;
-  protocolDescription: string;
-  generateButton: string;
-  joinButton: string;
-  footerVersion: string;
-  footerStatus: string;
-  footerEncryption: string;
-  footerEphemerality: string;
-};
-
 export type RoomsBackendData = {
   rooms: RoomDetailData[];
 };
