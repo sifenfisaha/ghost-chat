@@ -1,7 +1,9 @@
 'use client';
 
-import { UsersIcon } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { CheckIcon, CopyIcon, UsersIcon } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useAppSelector } from '@/store/hooks';
@@ -28,7 +30,34 @@ export function RoomSidebarContent({
   roomId,
   className,
 }: RoomSidebarContentProps) {
+  const [copied, setCopied] = useState(false);
+  const copiedTimeoutRef = useRef<number | null>(null);
   const room = useAppSelector((state) => state.rooms.roomsById[roomId]);
+
+  useEffect(() => {
+    return () => {
+      if (copiedTimeoutRef.current !== null) {
+        window.clearTimeout(copiedTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopyRoomId = async () => {
+    try {
+      await navigator.clipboard.writeText(roomId);
+      setCopied(true);
+      if (copiedTimeoutRef.current !== null) {
+        window.clearTimeout(copiedTimeoutRef.current);
+      }
+      copiedTimeoutRef.current = window.setTimeout(() => {
+        setCopied(false);
+        copiedTimeoutRef.current = null;
+      }, 1000);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   if (!room) return null;
 
   return (
@@ -49,7 +78,22 @@ export function RoomSidebarContent({
             <p className="text-muted-foreground mb-1 text-[10px] uppercase">
               Session ID
             </p>
-            <p className="text-primary font-medium">{roomId}</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-primary font-medium">{roomId}</p>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                onClick={handleCopyRoomId}
+                aria-label="Copy room ID"
+              >
+                {copied ? (
+                  <CheckIcon className="text-primary size-3.5" />
+                ) : (
+                  <CopyIcon className="size-3.5" />
+                )}
+              </Button>
+            </div>
           </div>
           <InfoRow label="Encryption" value={room.encryption} />
           <InfoRow label="Auto-Destruct" value={room.autoDestruct} />
