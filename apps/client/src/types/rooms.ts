@@ -20,7 +20,7 @@ export type RoomMessage = {
   author: string;
   time: string;
   message: string;
-  variant?: 'default' | 'primary';
+  variant?: 'default' | 'primary' | 'system';
 };
 
 export type RoomLog = {
@@ -56,8 +56,4 @@ export type RoomDetailData = {
   autoWipeEnabled: boolean;
   composerDraft: string;
   composerPlaceholder: string;
-};
-
-export type RoomsBackendData = {
-  rooms: RoomDetailData[];
 };

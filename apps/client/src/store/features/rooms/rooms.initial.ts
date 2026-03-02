@@ -1,4 +1,3 @@
-import { roomsBackendData } from '@/components/rooms/data';
 import { type RoomDetailData } from '@/types/rooms';
 
 export type RoomsStateData = {
@@ -7,15 +6,10 @@ export type RoomsStateData = {
   activeRoomId: string | null;
 };
 
-const roomsById = Object.fromEntries(
-  roomsBackendData.rooms.map((room) => [room.id, cloneRoom(room)])
-);
-const roomOrder = roomsBackendData.rooms.map((room) => room.id);
-
 export const initialRoomsState: RoomsStateData = {
-  roomsById,
-  roomOrder,
-  activeRoomId: roomOrder[0] ?? null,
+  roomsById: {},
+  roomOrder: [],
+  activeRoomId: null,
 };
 
 export function cloneRoom(room: RoomDetailData): RoomDetailData {
@@ -39,7 +33,26 @@ export function formatNowTime() {
   return formatter.format(new Date());
 }
 
-export function generateRoomId() {
-  const token = Math.random().toString(36).slice(2, 10);
-  return `s-${token.slice(0, 3)}-${token.slice(3, 6)}-${token.slice(6, 8)}x`;
+export function createEmptyRoom(roomId: string): RoomDetailData {
+  return {
+    id: roomId,
+    title: `Room ${roomId.slice(0, 6)}`,
+    sessionStatus: 'Live Session',
+    countdown: '00:00',
+    connectionState: 'Connecting...',
+    latencyLabel: 'Live',
+    operator: 'guest',
+    systemBanner: 'ENCRYPTED CHAT CHANNEL READY',
+    alert: '',
+    assets: [],
+    securityRules: [],
+    messages: [],
+    logs: [],
+    users: [],
+    encryption: 'AES-256-GCM',
+    autoDestruct: '0m',
+    autoWipeEnabled: true,
+    composerDraft: '',
+    composerPlaceholder: 'Type a secure message...',
+  };
 }
