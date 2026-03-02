@@ -19,15 +19,17 @@ import {
   createPrivateSession,
   joinExistingRoom,
 } from '@/store/features/rooms/rooms.slice';
+import { useMutation } from '@tanstack/react-query';
+import { useSocket } from '@/hooks/use-socket';
 
 export function RoomsLaunchScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [roomIdInput, setRoomIdInput] = useState('');
-  const landing = useAppSelector((state) => state.rooms.landing);
   const firstRoomId = useAppSelector(
     (state) => state.rooms.roomOrder[0] ?? null
   );
+  const { socket, isConnected } = useSocket();
 
   const handleCreate = () => {
     const roomId = dispatch(createPrivateSession()).payload;
@@ -42,9 +44,60 @@ export function RoomsLaunchScreen() {
     router.push(`/rooms/${roomId}`);
   };
 
-  const handleJoinSubmit = (event: FormEvent<HTMLFormElement>) => {
+  // create room
+  const { mutate: createRoom, isPending: isCreatingRoom } = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('http://localhost:4000/api/rooms/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to create room');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      const { roomId } = data;
+      dispatch(createPrivateSession());
+      router.push(`/rooms/${roomId}`);
+    },
+    onError: () => {
+      alert('Failed to create room. Please try again.');
+    },
+  });
+
+  // join room
+
+  const { mutate: joinRoom, isPending: isJoiningRoom } = useMutation({
+    mutationFn: async (roomId: string) => {
+      const response = await fetch('http://localhost:4000/api/rooms/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomId }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to join room');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      const { roomId } = data;
+      dispatch(joinExistingRoom(roomId));
+      setRoomIdInput('');
+      router.push(`/rooms/${roomId}`);
+    },
+    onError: () => {
+      alert('Failed to join room. Please check the room ID and try again.');
+    },
+  });
+
+  const handleJoinClick = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleJoin();
+  };
+  const handleCreateClick = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    createRoom();
   };
 
   return (
@@ -57,24 +110,24 @@ export function RoomsLaunchScreen() {
             </div>
             <div>
               <p className="text-xs font-semibold tracking-[0.32em] text-foreground/90 uppercase">
-                {landing.title}
+                SEC-402-DELTA
               </p>
               <p className="text-muted-foreground text-[11px] tracking-[0.2em] uppercase">
-                {landing.status}
+                System Operational
               </p>
             </div>
           </div>
 
           <nav className="text-muted-foreground hidden items-center gap-8 text-[11px] tracking-[0.2em] uppercase sm:flex">
-            {landing.navItems.map((item) => (
-              <Link
-                key={item}
-                className="hover:text-foreground transition-colors"
-                href="#"
-              >
-                {item}
-              </Link>
-            ))}
+            <Link className="hover:text-foreground transition-colors" href="#">
+              Docs
+            </Link>
+            <Link className="hover:text-foreground transition-colors" href="#">
+              Security
+            </Link>
+            <Link className="hover:text-foreground transition-colors" href="#">
+              API
+            </Link>
           </nav>
         </div>
       </header>
@@ -86,20 +139,25 @@ export function RoomsLaunchScreen() {
               <FingerprintIcon className="size-6" />
             </div>
             <CardTitle className="text-3xl font-semibold tracking-tight">
-              {landing.protocolTitle}
+              Initialize Secure Protocol
             </CardTitle>
             <CardDescription className="mx-auto mt-2 max-w-md text-sm leading-6">
-              {landing.protocolDescription}
+              Establish an ephemeral, end-to-end encrypted communication
+              channel. Room data self-destructs after 10 minutes.
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-5 px-8 pb-8">
-            <Button
-              onClick={handleCreate}
-              className="h-11 w-full text-[12px] tracking-[0.24em] uppercase"
-            >
-              {landing.generateButton}
-            </Button>
+            <form onSubmit={handleCreateClick}>
+              <Button
+                type="submit"
+                className="h-11 w-full text-[12px] tracking-[0.24em] uppercase"
+              >
+                {isCreatingRoom
+                  ? 'Generating Private Session...'
+                  : 'Generate Private Session'}
+              </Button>
+            </form>
 
             <div className="flex items-center gap-3">
               <div className="bg-border h-px flex-1" />
@@ -109,7 +167,7 @@ export function RoomsLaunchScreen() {
               <div className="bg-border h-px flex-1" />
             </div>
 
-            <form className="space-y-3" onSubmit={handleJoinSubmit}>
+            <form className="space-y-3" onSubmit={handleJoinClick}>
               <Input
                 value={roomIdInput}
                 onChange={(event) => setRoomIdInput(event.target.value)}
@@ -122,7 +180,7 @@ export function RoomsLaunchScreen() {
                 variant="ghost"
                 className="text-muted-foreground mx-auto flex h-auto w-auto gap-2 px-0 py-0 text-[11px] tracking-[0.2em] uppercase hover:bg-transparent hover:text-foreground"
               >
-                {landing.joinButton}
+                Join Existing Room
               </Button>
             </form>
           </CardContent>
@@ -133,20 +191,20 @@ export function RoomsLaunchScreen() {
         <div className="text-muted-foreground mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 text-[11px] tracking-[0.14em] uppercase">
           <div className="flex items-center gap-2">
             <LockIcon className="size-3.5" />
-            <span>{landing.footerVersion}</span>
+            <span>v2.4.6-stable</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="bg-primary size-1.5 rounded-full" />
-            <span>{landing.footerStatus}</span>
+            <span>Status: Connected</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="inline-flex items-center gap-1.5">
               <LockIcon className="size-3.5" />
-              {landing.footerEncryption}
+              AES-256-GCM Encryption
             </span>
             <span className="inline-flex items-center gap-1.5">
               <TimerIcon className="size-3.5" />
-              {landing.footerEphemerality}
+              10m Ephemerality
             </span>
           </div>
         </div>
