@@ -76,7 +76,7 @@ export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
   };
 
   return (
-    <main className="bg-background text-foreground relative h-screen overflow-hidden">
+    <main className="bg-background text-foreground relative h-dvh overflow-hidden">
       <div className="relative z-10 flex h-full min-h-0 flex-col">
         <RoomHeader roomId={roomId} onOpenSidebar={openMobileSidebar} />
 

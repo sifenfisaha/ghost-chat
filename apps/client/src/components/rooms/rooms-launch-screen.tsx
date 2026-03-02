@@ -78,7 +78,7 @@ export function RoomsLaunchScreen() {
   };
 
   return (
-    <main className="bg-background text-foreground relative min-h-screen overflow-hidden">
+    <main className="bg-background text-foreground relative flex h-dvh flex-col overflow-hidden">
       <header className="relative z-10 border-b border-border/50 px-6 py-5 md:px-10">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between">
           <div className="flex items-center gap-3">
@@ -109,7 +109,7 @@ export function RoomsLaunchScreen() {
         </div>
       </header>
 
-      <section className="relative z-10 flex min-h-[calc(100vh-136px)] items-center justify-center px-6 py-12">
+      <section className="relative z-10 flex min-h-0 flex-1 items-center justify-center overflow-hidden px-6 py-6 md:py-12">
         <Card className="w-full max-w-xl border-border/70 bg-card/80 py-0 backdrop-blur-md">
           <CardHeader className="px-8 pt-10 text-center">
             <div className="text-primary mx-auto mb-4 flex size-12 items-center justify-center border border-border bg-background/70">
