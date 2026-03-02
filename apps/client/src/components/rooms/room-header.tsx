@@ -57,7 +57,7 @@ export function RoomHeader({ roomId, onOpenSidebar }: RoomHeaderProps) {
           >
             <PanelRightOpenIcon className="size-4" />
           </Button>
-          <div className="border-border/70 bg-card/70 flex items-center gap-2 border p-2 md:px-3 md:py-2">
+          <div className="border-border/70 bg-card/70 md:flex hidden items-center gap-2 border p-2 md:px-3 md:py-2">
             <UserIcon className="size-3.5" />
             <span className="hidden text-xs font-medium md:inline">
               {room.operator}

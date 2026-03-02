@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { XIcon } from 'lucide-react';
 
 import { RoomChatPanel } from '@/components/rooms/room-chat-panel';
@@ -20,7 +20,9 @@ type RoomWorkspaceProps = {
 
 export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
   const dispatch = useAppDispatch();
+  const [isMobileSidebarMounted, setIsMobileSidebarMounted] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const closeSidebarTimeoutRef = useRef<number | null>(null);
 
   useSocket({
     enabled: Boolean(roomId),
@@ -35,15 +37,40 @@ export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
 
   useEffect(() => {
     setIsMobileSidebarOpen(false);
+    setIsMobileSidebarMounted(false);
   }, [roomId]);
+
+  useEffect(() => {
+    return () => {
+      if (closeSidebarTimeoutRef.current !== null) {
+        window.clearTimeout(closeSidebarTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const openMobileSidebar = () => {
+    if (closeSidebarTimeoutRef.current !== null) {
+      window.clearTimeout(closeSidebarTimeoutRef.current);
+      closeSidebarTimeoutRef.current = null;
+    }
+    setIsMobileSidebarMounted(true);
+    requestAnimationFrame(() => {
+      setIsMobileSidebarOpen(true);
+    });
+  };
+
+  const closeMobileSidebar = () => {
+    setIsMobileSidebarOpen(false);
+    closeSidebarTimeoutRef.current = window.setTimeout(() => {
+      setIsMobileSidebarMounted(false);
+      closeSidebarTimeoutRef.current = null;
+    }, 220);
+  };
 
   return (
     <main className="bg-background text-foreground relative h-screen overflow-hidden">
       <div className="relative z-10 flex h-full min-h-0 flex-col">
-        <RoomHeader
-          roomId={roomId}
-          onOpenSidebar={() => setIsMobileSidebarOpen(true)}
-        />
+        <RoomHeader roomId={roomId} onOpenSidebar={openMobileSidebar} />
 
         <section className="mx-auto grid w-full max-w-380 min-h-0 flex-1 grid-cols-1 gap-4 overflow-hidden p-4 md:p-6 xl:grid-cols-[300px_1fr]">
           <RoomRightPanel roomId={roomId} />
@@ -51,7 +78,7 @@ export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
         </section>
       </div>
 
-      {isMobileSidebarOpen ? (
+      {isMobileSidebarMounted ? (
         <div
           className="fixed inset-0 z-40 xl:hidden"
           role="dialog"
@@ -59,17 +86,23 @@ export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
         >
           <button
             type="button"
-            className="absolute inset-0 bg-black/45"
-            onClick={() => setIsMobileSidebarOpen(false)}
+            className={`absolute inset-0 bg-black/45 transition-opacity duration-200 ${
+              isMobileSidebarOpen ? 'opacity-100' : 'opacity-0'
+            }`}
+            onClick={closeMobileSidebar}
             aria-label="Close room sidebar"
           />
-          <aside className="border-border/70 bg-background absolute top-0 right-0 h-full w-[min(24rem,88vw)] border-l p-3">
+          <aside
+            className={`border-border/70 bg-background absolute top-0 right-0 h-full w-[min(24rem,88vw)] border-l p-3 transition-transform duration-200 ease-out ${
+              isMobileSidebarOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+          >
             <div className="mb-3 flex items-center justify-end">
               <Button
                 type="button"
                 variant="outline"
                 size="icon-sm"
-                onClick={() => setIsMobileSidebarOpen(false)}
+                onClick={closeMobileSidebar}
                 aria-label="Close room sidebar"
               >
                 <XIcon className="size-4" />
