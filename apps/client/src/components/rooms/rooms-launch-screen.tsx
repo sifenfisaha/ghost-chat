@@ -26,24 +26,14 @@ export function RoomsLaunchScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [roomIdInput, setRoomIdInput] = useState('');
-  const firstRoomId = useAppSelector(
-    (state) => state.rooms.roomOrder[0] ?? null
-  );
-
-  const handleJoin = () => {
-    const roomId = roomIdInput.trim() || firstRoomId;
-    if (!roomId) return;
-    dispatch(joinExistingRoom(roomId));
-    setRoomIdInput('');
-    router.push(`/rooms/${roomId}`);
-  };
+  const firstRoomId = useAppSelector((state) => state.rooms.roomOrder[0] ?? '');
 
   // create room
   const { mutate: createRoom, isPending: isCreatingRoom } = useMutation({
     mutationFn: createRoomRequest,
     onSuccess: (data) => {
       const { roomId } = data;
-      dispatch(createPrivateSession());
+      dispatch(createPrivateSession(roomId));
       router.push(`/rooms/${roomId}`);
     },
     onError: () => {
@@ -54,7 +44,7 @@ export function RoomsLaunchScreen() {
   // join room
 
   const { mutate: joinRoom, isPending: isJoiningRoom } = useMutation({
-    mutationFn: joinRoomRequest,
+    mutationFn: (roomId: string) => joinRoomRequest(roomId),
     onSuccess: (data) => {
       const { roomId } = data;
       dispatch(joinExistingRoom(roomId));

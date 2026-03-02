@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { XIcon } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 import { RoomChatPanel } from '@/components/rooms/room-chat-panel';
 import { RoomHeader } from '@/components/rooms/room-header';
@@ -11,8 +13,14 @@ import {
 } from '@/components/rooms/room-right-panel';
 import { Button } from '@/components/ui/button';
 import { useSocket } from '@/hooks/use-socket';
-import { useAppDispatch } from '@/store/hooks';
-import { ensureRoom, setActiveRoom } from '@/store/features/rooms/rooms.slice';
+import { getRoomDetailRequest } from '@/lib/rooms-api';
+import { ensureGuestSessionToken } from '@/lib/session-client';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import {
+  ensureRoom,
+  hydrateRoomFromServer,
+  setActiveRoom,
+} from '@/store/features/rooms/rooms.slice';
 import { joinSocketRoom } from '@/store/features/socket/socket.thunks';
 
 type RoomWorkspaceProps = {
@@ -20,18 +28,31 @@ type RoomWorkspaceProps = {
 };
 
 export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
+  const router = useRouter();
   const dispatch = useAppDispatch();
+  const joinedRoomIds = useAppSelector((state) => state.socket.joinedRoomIds);
   const [isMobileSidebarMounted, setIsMobileSidebarMounted] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const closeSidebarTimeoutRef = useRef<number | null>(null);
 
+  const sessionQuery = useQuery({
+    queryKey: ['guest-session'],
+    queryFn: ensureGuestSessionToken,
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+
   const { isConnected } = useSocket({
-    enabled: Boolean(roomId),
+    enabled: Boolean(roomId) && sessionQuery.isSuccess,
     autoConnect: true,
     disconnectOnUnmount: false,
   });
 
-  console.log(isConnected);
+  const roomDetailQuery = useQuery({
+    queryKey: ['room-detail', roomId],
+    queryFn: () => getRoomDetailRequest(roomId),
+    enabled: Boolean(roomId) && sessionQuery.isSuccess,
+  });
 
   useEffect(() => {
     dispatch(ensureRoom(roomId));
@@ -39,9 +60,22 @@ export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
   }, [dispatch, roomId]);
 
   useEffect(() => {
+    const room = roomDetailQuery.data?.room;
+    if (!room) return;
+
+    dispatch(hydrateRoomFromServer(room));
+  }, [dispatch, roomDetailQuery.data?.room]);
+
+  useEffect(() => {
+    if (!roomDetailQuery.isError) return;
+    router.replace('/rooms');
+  }, [roomDetailQuery.isError, router]);
+
+  useEffect(() => {
     if (!isConnected) return;
+    if (joinedRoomIds.includes(roomId)) return;
     dispatch(joinSocketRoom(roomId));
-  }, [dispatch, isConnected, roomId]);
+  }, [dispatch, isConnected, joinedRoomIds, roomId]);
 
   // useEffect(() => {
   //   setIsMobileSidebarOpen(false);
