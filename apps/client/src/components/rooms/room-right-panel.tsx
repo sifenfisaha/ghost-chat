@@ -60,6 +60,8 @@ export function RoomSidebarContent({
 
   if (!room) return null;
 
+  const activeUsersCount = room.users.filter((user) => user.active).length;
+
   return (
     <div
       className={cn(
@@ -103,26 +105,7 @@ export function RoomSidebarContent({
       <Card className="border-border/70 bg-card/70 flex min-h-0 flex-1 flex-col py-0">
         <CardHeader className="border-b border-border/60 px-4 py-3">
           <CardTitle className="flex items-center justify-between text-xs tracking-[0.14em] uppercase">
-            <span>System Logs</span>
-            <span className="text-primary text-[10px]">Live</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="min-h-0 flex-1 overflow-y-auto space-y-2 px-4 py-4">
-          {room.logs.map((log) => (
-            <p key={log.id} className="text-muted-foreground text-[11px]">
-              <span className="mr-1.5 text-[10px] tabular-nums text-foreground/70">
-                [{log.time}]
-              </span>
-              {log.message}
-            </p>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card className="border-border/70 bg-card/70 flex min-h-0 flex-1 flex-col py-0">
-        <CardHeader className="border-b border-border/60 px-4 py-3">
-          <CardTitle className="flex items-center justify-between text-xs tracking-[0.14em] uppercase">
-            <span>Active Users ({room.users.length})</span>
+            <span>Active Users ({activeUsersCount})</span>
             <UsersIcon className="size-3.5" />
           </CardTitle>
         </CardHeader>
@@ -136,6 +119,25 @@ export function RoomSidebarContent({
                 {user.state}
               </span>
             </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card className="border-border/70 bg-card/70 flex min-h-0 flex-1 flex-col py-0">
+        <CardHeader className="border-b border-border/60 px-4 py-3">
+          <CardTitle className="flex items-center justify-between text-xs tracking-[0.14em] uppercase">
+            <span>System Logs</span>
+            <span className="text-primary text-[10px]">Live</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="min-h-0 flex-1 overflow-y-auto space-y-2 px-4 py-4">
+          {room.logs.map((log) => (
+            <p key={log.id} className="text-muted-foreground text-[11px]">
+              <span className="mr-1.5 text-[10px] tabular-nums text-foreground/70">
+                [{log.time}]
+              </span>
+              {log.message}
+            </p>
           ))}
         </CardContent>
       </Card>
