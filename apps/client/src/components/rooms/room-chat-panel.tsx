@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { SendIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,15 @@ type RoomChatPanelProps = {
 export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
   const dispatch = useAppDispatch();
   const room = useAppSelector((state) => state.rooms.roomsById[roomId]);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    });
+  }, [room?.messages.length]);
+
   if (!room) return null;
 
   return (
@@ -52,6 +62,8 @@ export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
               variant={chat.variant}
             />
           ))}
+
+          <div ref={messagesEndRef} />
         </div>
 
         <div className="mt-auto space-y-3 border-t border-border/60 pt-4">
@@ -63,6 +75,11 @@ export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
                   setComposerDraft({ roomId, draft: event.target.value })
                 )
               }
+              onKeyDown={(event) => {
+                if (event.key !== 'Enter') return;
+                event.preventDefault();
+                dispatch(sendMessage(roomId));
+              }}
               className="h-10 bg-background/70 text-sm"
               placeholder={room.composerPlaceholder}
               autoComplete="off"
