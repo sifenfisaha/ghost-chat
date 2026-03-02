@@ -6,6 +6,7 @@ import {
   type ServerToClientEvents,
   type SocketClientOptions,
 } from '@/types/socket';
+import { getSessionToken } from '@/lib/session-client';
 
 const DEFAULT_SOCKET_URL =
   process.env.NEXT_PUBLIC_SOCKET_URL ||
@@ -34,6 +35,9 @@ export function getSocketClient(
       autoConnect: false,
       withCredentials: true,
       transports: ['websocket', 'polling'],
+      auth: (cb) => {
+        cb({ token: getSessionToken() });
+      },
     });
 
     sockets.set(namespace, socket);
