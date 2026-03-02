@@ -8,7 +8,14 @@ import AppRouter from './routes/index.js';
 
 export function createApp() {
   const app = express();
-  app.use(cors());
+  const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+
+  app.use(
+    cors({
+      origin: corsOrigin,
+      credentials: true,
+    })
+  );
   app.use(express.json());
   app.use(
     morgan(':method :url :status :response-time ms - :res[content-length]', {
