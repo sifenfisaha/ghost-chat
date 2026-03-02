@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useSocket } from '@/hooks/use-socket';
 import { useAppDispatch } from '@/store/hooks';
 import { ensureRoom, setActiveRoom } from '@/store/features/rooms/rooms.slice';
+import { joinSocketRoom } from '@/store/features/socket/socket.thunks';
 
 type RoomWorkspaceProps = {
   roomId: string;
@@ -24,7 +25,7 @@ export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const closeSidebarTimeoutRef = useRef<number | null>(null);
 
-  useSocket({
+  const { isConnected } = useSocket({
     enabled: Boolean(roomId),
     autoConnect: true,
     disconnectOnUnmount: false,
@@ -36,9 +37,14 @@ export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
   }, [dispatch, roomId]);
 
   useEffect(() => {
-    setIsMobileSidebarOpen(false);
-    setIsMobileSidebarMounted(false);
-  }, [roomId]);
+    if (!isConnected) return;
+    dispatch(joinSocketRoom(roomId));
+  }, [dispatch, isConnected, roomId]);
+
+  // useEffect(() => {
+  //   setIsMobileSidebarOpen(false);
+  //   setIsMobileSidebarMounted(false);
+  // }, [roomId]);
 
   useEffect(() => {
     return () => {

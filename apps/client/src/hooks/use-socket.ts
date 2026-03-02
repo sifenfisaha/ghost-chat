@@ -1,12 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { disconnectSocketClient, getSocketClient } from '@/socket/client';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { bindSocketToStore } from '@/store/features/socket/socket.thunks';
 
 import { type UseSocketOptions, type UseSocketResult } from '@/types/socket';
 
 export function useSocket(options: UseSocketOptions = {}): UseSocketResult {
+  const dispatch = useAppDispatch();
   const {
     enabled = true,
     autoConnect = true,
@@ -15,40 +18,26 @@ export function useSocket(options: UseSocketOptions = {}): UseSocketResult {
   } = options;
 
   const socket = useMemo(() => getSocketClient({ namespace }), [namespace]);
-  const [isConnected, setIsConnected] = useState(socket.connected);
-  const [socketId, setSocketId] = useState<string | null>(socket.id ?? null);
-  const [transport, setTransport] = useState<string | null>(
-    socket.io.engine?.transport?.name ?? null
+  const { isConnected, socketId, transport } = useAppSelector(
+    (state) => state.socket
   );
 
   useEffect(() => {
-    const handleConnect = () => {
-      setIsConnected(true);
-      setSocketId(socket.id ?? null);
-      setTransport(socket.io.engine?.transport?.name ?? null);
-    };
+    if (!enabled) return;
 
-    const handleDisconnect = () => {
-      setIsConnected(false);
-      setTransport(null);
-    };
-
-    if (enabled && autoConnect && !socket.connected) {
-      socket.connect();
-    }
-
-    socket.on('connect', handleConnect);
-    socket.on('disconnect', handleDisconnect);
+    const binding = bindSocketToStore(dispatch, {
+      namespace,
+      autoConnect,
+    });
 
     return () => {
-      socket.off('connect', handleConnect);
-      socket.off('disconnect', handleDisconnect);
+      binding.dispose();
 
       if (disconnectOnUnmount) {
         disconnectSocketClient(namespace);
       }
     };
-  }, [autoConnect, disconnectOnUnmount, enabled, namespace, socket]);
+  }, [autoConnect, dispatch, disconnectOnUnmount, enabled, namespace]);
 
   return {
     socket,
