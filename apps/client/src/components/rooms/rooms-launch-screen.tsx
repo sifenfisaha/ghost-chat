@@ -151,6 +151,7 @@ export function RoomsLaunchScreen() {
                 placeholder="Enter room ID"
                 aria-label="Room ID"
                 className="h-10 px-3 text-sm"
+                autoComplete="off"
               />
               <Button
                 type="submit"

@@ -65,6 +65,7 @@ export function RoomChatPanel({ roomId }: RoomChatPanelProps) {
               }
               className="h-10 bg-background/70 text-sm"
               placeholder={room.composerPlaceholder}
+              autoComplete="off"
             />
             <Button
               onClick={() => dispatch(sendMessage(roomId))}

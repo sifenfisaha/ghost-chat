@@ -10,4 +10,12 @@ router.post('/create', (req: Request, res: Response) => {
   res.json({ roomId, password });
 });
 
+router.post('/join', (req: Request, res: Response) => {
+  const { roomId } = req.body;
+  if (!roomId) {
+    return res.status(400).json({ error: 'roomId is required' });
+  }
+  res.json({ roomId });
+});
+
 export default router;
