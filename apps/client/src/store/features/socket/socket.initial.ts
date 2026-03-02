@@ -11,6 +11,7 @@ export type SocketStateData = {
   socketId: string | null;
   transport: string | null;
   joinedRoomIds: string[];
+  typingByRoom: Record<string, string[]>;
   lastError: string | null;
 };
 
@@ -21,5 +22,6 @@ export const initialSocketState: SocketStateData = {
   socketId: null,
   transport: null,
   joinedRoomIds: [],
+  typingByRoom: {},
   lastError: null,
 };

@@ -20,6 +20,8 @@ const socketSlice = createSlice({
       state.namespace = action.payload.namespace;
       state.status = 'connecting';
       state.lastError = null;
+      state.joinedRoomIds = [];
+      state.typingByRoom = {};
     },
 
     socketConnected: (state, action: PayloadAction<SocketConnectedPayload>) => {
@@ -39,6 +41,8 @@ const socketSlice = createSlice({
       state.isConnected = false;
       state.socketId = null;
       state.transport = null;
+      state.joinedRoomIds = [];
+      state.typingByRoom = {};
 
       const reason = action.payload?.reason?.trim();
       if (reason) {
@@ -58,6 +62,36 @@ const socketSlice = createSlice({
       }
     },
 
+    socketUserTypingUpdated: (
+      state,
+      action: PayloadAction<{
+        roomId: string;
+        userId: string;
+        isTyping: boolean;
+      }>
+    ) => {
+      const { roomId, userId, isTyping } = action.payload;
+      const normalizedRoomId = roomId.trim();
+      const normalizedUserId = userId.trim();
+
+      if (!normalizedRoomId || !normalizedUserId) {
+        return;
+      }
+
+      const current = state.typingByRoom[normalizedRoomId] ?? [];
+
+      if (isTyping) {
+        if (!current.includes(normalizedUserId)) {
+          state.typingByRoom[normalizedRoomId] = [...current, normalizedUserId];
+        }
+        return;
+      }
+
+      state.typingByRoom[normalizedRoomId] = current.filter(
+        (id) => id !== normalizedUserId
+      );
+    },
+
     socketErrorReceived: (state, action: PayloadAction<string>) => {
       state.lastError = action.payload;
     },
@@ -74,6 +108,7 @@ export const {
   socketDisconnected,
   socketTransportUpdated,
   socketRoomJoined,
+  socketUserTypingUpdated,
   socketErrorReceived,
   socketErrorCleared,
 } = socketSlice.actions;

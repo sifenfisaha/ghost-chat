@@ -8,6 +8,8 @@ export type ChatMessage = {
   id: string;
   roomId: string;
   text: string;
+  author: string;
+  variant?: 'default' | 'primary' | 'system';
   senderId: string;
   createdAt: string;
 };
@@ -30,6 +32,15 @@ export type UserTypingPayload = {
   roomId: string;
   userId: string;
   isTyping: boolean;
+  updatedAt: string;
+};
+
+export type RoomPresencePayload = {
+  roomId: string;
+  userId: string;
+  username: string;
+  active: boolean;
+  state: string;
   updatedAt: string;
 };
 
@@ -56,6 +67,7 @@ export interface ClientToServerEvents {
 export interface ServerToClientEvents {
   receive_message: (message: ChatMessage) => void;
   user_typing: (payload: UserTypingPayload) => void;
+  room_presence: (payload: RoomPresencePayload) => void;
   socket_error: (payload: SocketErrorPayload) => void;
 }
 
