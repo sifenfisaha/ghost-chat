@@ -1,15 +1,14 @@
 import cors from 'cors';
 import { sql } from 'drizzle-orm';
 import express from 'express';
-import { db } from './db';
-import { logger } from './db/logger';
+import { db } from './db/index.js';
+import { logger } from './db/logger.js';
 import morgan from 'morgan';
+import AppRouter from './routes/index.js';
 
 export function createApp() {
   const app = express();
-  const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
-
-  app.use(cors({ origin: corsOrigin }));
+  app.use(cors());
   app.use(express.json());
   app.use(
     morgan(':method :url :status :response-time ms - :res[content-length]', {
@@ -48,6 +47,8 @@ export function createApp() {
       });
     }
   });
+
+  app.use('/api', AppRouter);
 
   return app;
 }
