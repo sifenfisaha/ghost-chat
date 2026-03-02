@@ -2,9 +2,9 @@ import { createServer } from 'node:http';
 
 import dotenv from 'dotenv';
 
-import { createApp } from './index';
-import { logger } from './db/logger';
-import { createSocketServer } from './socket';
+import { createApp } from './index.js';
+import { logger } from './db/logger.js';
+import { createSocketServer } from './socket/index.js';
 
 dotenv.config();
 

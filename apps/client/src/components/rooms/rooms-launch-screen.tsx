@@ -20,7 +20,7 @@ import {
   joinExistingRoom,
 } from '@/store/features/rooms/rooms.slice';
 import { useMutation } from '@tanstack/react-query';
-import { useSocket } from '@/hooks/use-socket';
+import { createRoomRequest, joinRoomRequest } from '@/lib/rooms-api';
 
 export function RoomsLaunchScreen() {
   const router = useRouter();
@@ -29,12 +29,6 @@ export function RoomsLaunchScreen() {
   const firstRoomId = useAppSelector(
     (state) => state.rooms.roomOrder[0] ?? null
   );
-  const { socket, isConnected } = useSocket();
-
-  const handleCreate = () => {
-    const roomId = dispatch(createPrivateSession()).payload;
-    router.push(`/rooms/${roomId}`);
-  };
 
   const handleJoin = () => {
     const roomId = roomIdInput.trim() || firstRoomId;
@@ -46,16 +40,7 @@ export function RoomsLaunchScreen() {
 
   // create room
   const { mutate: createRoom, isPending: isCreatingRoom } = useMutation({
-    mutationFn: async () => {
-      const response = await fetch('http://localhost:4000/api/rooms/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to create room');
-      }
-      return response.json();
-    },
+    mutationFn: createRoomRequest,
     onSuccess: (data) => {
       const { roomId } = data;
       dispatch(createPrivateSession());
@@ -69,17 +54,7 @@ export function RoomsLaunchScreen() {
   // join room
 
   const { mutate: joinRoom, isPending: isJoiningRoom } = useMutation({
-    mutationFn: async (roomId: string) => {
-      const response = await fetch('http://localhost:4000/api/rooms/join', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roomId }),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to join room');
-      }
-      return response.json();
-    },
+    mutationFn: joinRoomRequest,
     onSuccess: (data) => {
       const { roomId } = data;
       dispatch(joinExistingRoom(roomId));
@@ -93,7 +68,9 @@ export function RoomsLaunchScreen() {
 
   const handleJoinClick = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleJoin();
+    const roomId = roomIdInput.trim() || firstRoomId;
+    if (!roomId) return;
+    joinRoom(roomId);
   };
   const handleCreateClick = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -180,7 +157,7 @@ export function RoomsLaunchScreen() {
                 variant="ghost"
                 className="text-muted-foreground mx-auto flex h-auto w-auto gap-2 px-0 py-0 text-[11px] tracking-[0.2em] uppercase hover:bg-transparent hover:text-foreground"
               >
-                Join Existing Room
+                {isJoiningRoom ? 'Joining Room...' : 'Join Existing Room'}
               </Button>
             </form>
           </CardContent>

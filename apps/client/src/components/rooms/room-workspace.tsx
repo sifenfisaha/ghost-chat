@@ -31,6 +31,8 @@ export function RoomWorkspace({ roomId }: RoomWorkspaceProps) {
     disconnectOnUnmount: false,
   });
 
+  console.log(isConnected);
+
   useEffect(() => {
     dispatch(ensureRoom(roomId));
     dispatch(setActiveRoom(roomId));
