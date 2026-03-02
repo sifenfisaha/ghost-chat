@@ -2,14 +2,14 @@ import { type Server as HttpServer } from 'node:http';
 
 import { Server } from 'socket.io';
 
-import { logger } from '../db/logger';
+import { logger } from '../db/logger.js';
 import {
   type AppIoServer,
   type AppIoSocket,
   type ChatMessage,
   type ClientToServerEvents,
   type ServerToClientEvents,
-} from '../types/socket';
+} from '../types/socket.js';
 
 export function createSocketServer(httpServer: HttpServer) {
   const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
