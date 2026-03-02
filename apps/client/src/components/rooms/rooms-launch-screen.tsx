@@ -1,10 +1,12 @@
 'use client';
 
+import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FingerprintIcon, LockIcon, ShieldIcon, TimerIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Card,
   CardContent,
@@ -21,6 +23,7 @@ import {
 export function RoomsLaunchScreen() {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [roomIdInput, setRoomIdInput] = useState('');
   const landing = useAppSelector((state) => state.rooms.landing);
   const firstRoomId = useAppSelector(
     (state) => state.rooms.roomOrder[0] ?? null
@@ -32,10 +35,16 @@ export function RoomsLaunchScreen() {
   };
 
   const handleJoin = () => {
-    const roomId = firstRoomId;
+    const roomId = roomIdInput.trim() || firstRoomId;
     if (!roomId) return;
     dispatch(joinExistingRoom(roomId));
+    setRoomIdInput('');
     router.push(`/rooms/${roomId}`);
+  };
+
+  const handleJoinSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleJoin();
   };
 
   return (
@@ -91,13 +100,31 @@ export function RoomsLaunchScreen() {
             >
               {landing.generateButton}
             </Button>
-            <Button
-              onClick={handleJoin}
-              variant="ghost"
-              className="text-muted-foreground mx-auto flex h-auto w-auto gap-2 px-0 py-0 text-[11px] tracking-[0.2em] uppercase hover:bg-transparent hover:text-foreground"
-            >
-              {landing.joinButton}
-            </Button>
+
+            <div className="flex items-center gap-3">
+              <div className="bg-border h-px flex-1" />
+              <span className="text-muted-foreground text-[11px] tracking-[0.2em] uppercase">
+                or
+              </span>
+              <div className="bg-border h-px flex-1" />
+            </div>
+
+            <form className="space-y-3" onSubmit={handleJoinSubmit}>
+              <Input
+                value={roomIdInput}
+                onChange={(event) => setRoomIdInput(event.target.value)}
+                placeholder="Enter room ID"
+                aria-label="Room ID"
+                className="h-10 px-3 text-sm"
+              />
+              <Button
+                type="submit"
+                variant="ghost"
+                className="text-muted-foreground mx-auto flex h-auto w-auto gap-2 px-0 py-0 text-[11px] tracking-[0.2em] uppercase hover:bg-transparent hover:text-foreground"
+              >
+                {landing.joinButton}
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </section>
